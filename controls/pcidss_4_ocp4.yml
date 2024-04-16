@@ -1356,10 +1356,12 @@ controls:
         it will be required and must be fully considered during a PCI DSS assessment.
       levels:
         - base
-      status: pending
+      status: automated
       notes: |-
         This requirement is a best practice until 31 March 2025, after which it will be required
         and must be fully considered during a PCI DSS assessment.
+      rules:
+        - container_security_operator_exists
 
     - id: 6.3.3
       title: All system components are protected from known vulnerabilities by installing

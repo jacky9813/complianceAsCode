@@ -29,6 +29,7 @@ rationale: |-
 
 references:
   nist: CM-6(b)
+  pcidss4: Req-6.3.2
   srg: SRG-APP-000516-CTR-001335
 
 identifiers:
