@@ -3,3 +3,4 @@ packages:
 - kexec-tools
 rules:
 - service_kdump_disabled
+- service_kdump_enabled

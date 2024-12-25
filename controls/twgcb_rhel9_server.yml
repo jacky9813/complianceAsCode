@@ -283,7 +283,9 @@ controls:
       可設定之參數如下：
       dev：允許建立裝置檔案
       nodev：禁止建立裝置檔案
-    status: manual
+    status: automated
+    rules:
+      - mount_option_nodev_removable_partitions
   - id: TWGCB-01-012-0021
     title: 設定可攜式儲存裝置之nosuid選項
     levels:
@@ -294,7 +296,9 @@ controls:
       可設定之參數如下：
       suid：允許存在具有SUID屬性之檔案
       nosuid：禁止存在具有SUID屬性之檔案
-    status: manual
+    status: automated
+    rules:
+      - mount_option_nosuid_removable_partitions
   - id: TWGCB-01-012-0022
     title: 設定可攜式儲存裝置之noexec選項
     levels:
@@ -305,7 +309,9 @@ controls:
       可設定之參數如下：
       exec：允許啟動可執行二進制檔案
       noexec：禁止啟動可執行二進制檔案
-    status: manual
+    status: automated
+    rules:
+      - mount_option_noexec_removable_partitions
   - id: TWGCB-01-012-0023
     title: 設定使用者家目錄之nodev選項
     levels:
@@ -904,7 +910,9 @@ controls:
       這項原則決定是否設定程式庫檔案擁有群組
       系統程序在啟動或運行時會連結到程式庫檔案，將程式庫檔案載入到系統核心之記憶體空間，程式庫檔案還包含用以升級特權執行之特權程序
       設定root群組擁有，以保護程式庫檔案避免被未經授權竄改，維持系統完整性
-    status: manual
+    status: automated
+    rules:
+      - file_groupownership_library_dirs
   - id: TWGCB-01-012-0072
     title: 帳號不使用空白通行碼
     levels:
@@ -1244,7 +1252,9 @@ controls:
       這項原則設定決定是否啟用kdump(核心當機時之傾印機制)服務
       kdump是Linux核心其中一項功能，當系統當機時，kdump會被觸發並匯出一個記憶體映像檔案，該映像檔可用於除錯以找出導致當機之原因
       啟用kdump服務保留作業系統狀態資訊，以提供系統管理者修復系統所需相關資訊
-    status: manual
+    status: automated
+    rules:
+      - service_kdump_enabled
   - id: TWGCB-01-012-0102
     title: NIS用戶端套件
     levels:
@@ -2943,7 +2953,11 @@ controls:
       這項原則設定決定是否防止修改圖形使用者介面(GUI)設定
       使用者會談鎖定(Session Lock)機制，提供使用者需暫時離開系統之防護措施，必須重新進行身分鑑別才能解除鎖定登入系統
       防止使用者修改GUI介面設定，避免使用者變更系統之鎖定機制以保護系統安全
-    status: manual
+    status: automated
+    rules:
+      - dconf_gnome_session_idle_user_locks
+      - dconf_gnome_screensaver_user_locks
+      - dconf_gnome_screensaver_lock_locked
   - id: TWGCB-01-012-0238
     title: root帳號所屬群組
     levels:
@@ -3035,7 +3049,9 @@ controls:
       這項原則設定決定是否啟用iptables與ip6tables服務
       iptables與ip6tables為Linux作業系統本機端防火牆，藉由控制Linux核心之netfilter模組，進行封包過濾與處理
       同時運行firewalld與iptables(或ip6tables)服務，可能因彼此間之規則衝突，導致系統運作異常或產生資安風險，因此在使用firewalld時，建議停用並遮蔽iptables與ip6tables服務
-    status: manual
+    status: automated
+    rules:
+      - package_iptables-services_removed
   - id: TWGCB-01-012-0245
     title: nftables服務
     levels:
