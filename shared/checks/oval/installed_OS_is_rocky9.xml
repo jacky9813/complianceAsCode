@@ -12,7 +12,7 @@
       Rocky Linux 9</description>
     </metadata>
     <criteria>
-      <criterion comment="Installed operating system is part of the unix family"
+      <extend_definition comment="Installed operating system is part of the unix family"
       definition_ref="installed_OS_is_part_of_Unix_family" />
       <criteria operator="OR">
         <criterion comment="Rocky Linux 9 System is installed"
