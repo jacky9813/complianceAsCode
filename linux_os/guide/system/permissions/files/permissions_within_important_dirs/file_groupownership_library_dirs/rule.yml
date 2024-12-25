@@ -32,6 +32,18 @@ ocil: |-
 
     $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
 
+template:
+    name: file_groupowner
+    vars:
+        filepath:
+            - /lib/
+            - /lib64/
+            - /usr/lib/
+            - /usr/lib64/
+        recursive: 'true'
+        file_regex: ^.*$
+        gid_or_name: '0'
+
 fixtext: |-
     Configure the system-wide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
 
