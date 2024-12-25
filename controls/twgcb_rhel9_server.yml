@@ -32,6 +32,7 @@ levels:
   - id: nftables
     inherits_from:
       - common
+reference_type: twgcb
 product: rhel9
 controls:
   - id: TWGCB-01-012-0001
