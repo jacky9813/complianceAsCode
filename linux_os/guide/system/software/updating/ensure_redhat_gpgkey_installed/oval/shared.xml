@@ -79,7 +79,7 @@
   {{%- endif %}}
 
   {{%- if rocky_major_version %}}
-  <linux:rpminfo_test check="only one" check_existence"at_least_one_exists"
+  <linux:rpminfo_test check="only one" check_existence="at_least_one_exists"
   id="test_redhat_package_gpgkey-{{{ rocky_pkg_version }}}-{{{ rocky_pkg_release }}}_installed" version="1"
   comment="Rocky Linux {{{ rocky_major_version }}} key package is installed">
     <linux:object object_ref="object_redhat_package_gpg-pubkey" />
