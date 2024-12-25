@@ -13,7 +13,7 @@
     </metadata>
     <criteria>
       <criterion comment="Installed operating system is part of the unix family"
-      test_ref="test_rocky9_unix_family" />
+      definition_ref="installed_OS_is_part_of_Unix_family" />
       <criteria operator="OR">
         <criterion comment="Rocky Linux 9 System is installed"
           test_ref="test_rocky9_system" />
