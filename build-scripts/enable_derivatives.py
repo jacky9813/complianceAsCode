@@ -25,8 +25,10 @@ XCCDF12_NS = ssg.constants.XCCDF12_NS
 oval_ns = ssg.constants.oval_namespace
 
 CENTOS_NOTICE_ELEMENT = ssg.xml.ElementTree.fromstring(ssg.constants.CENTOS_NOTICE)
+ROCKY_NOTICE_ELEMENT = ssg.xml.ElementTree.fromstring(ssg.constants.ROCKY_NOTICE)
 
 CENTOS_WARNING = 'centos_warning'
+ROCKY_WARNING = 'rocky_warning'
 
 
 def parse_args():
@@ -34,6 +36,8 @@ def parse_args():
     parser = OptionParser(usage=usage)
     parser.add_option("--enable-centos", dest="centos", default=False,
                       action="store_true", help="Enable CentOS")
+    parser.add_option("--enable-rocky", dest="rocky", default=False,
+                      action="store_true", help="Enable Rocky Linux")
     parser.add_option("-i", "--input", dest="input_content", default=False,
                       action="store",
                       help="INPUT can be XCCDF or Source data stream")
@@ -73,6 +77,12 @@ def main():
         warning = CENTOS_WARNING
         derivative = "CentOS"
 
+    if options.rocky:
+        mapping = ssg.constants.RHEL_ROCKY_CPE_MAPPING
+        notice = ROCKY_NOTICE_ELEMENT
+        warning = ROCKY_WARNING
+        derivative = "Rocky Linux"
+
     tree = ssg.xml.open_xml(options.input_content)
     root = tree.getroot()
 
@@ -89,9 +99,10 @@ def main():
         raise RuntimeError("No Benchmark found!")
 
     for namespace, benchmark in benchmarks:
-        if args[1] not in ("cs9", "cs10") and not args[1].startswith("centos"):
+        if args[1] not in ("cs9", "cs10", "rocky9") and not args[1].startswith("centos"):
             # In all CentOS and CentOS Streams, profiles are kept because they are systems
             # intended to test content that will get into RHEL
+            # In Rocky Linux, profiles are kept because this is a clone of RHEL.
             ssg.build_derivatives.profile_handling(benchmark, namespace)
         if not ssg.build_derivatives.add_cpes(benchmark, namespace, mapping):
             import pprint

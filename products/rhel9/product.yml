@@ -58,4 +58,8 @@ centos_pkg_release: "5ccc5b19"
 centos_pkg_version: "8483c65d"
 centos_major_version: "9"
 
+rocky_pkg_release: "6279464b"
+rocky_pkg_version: "350d275d"
+rocky_major_version: "9"
+
 journald_conf_dir_path: /etc/systemd/journald.conf.d
