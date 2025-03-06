@@ -209,6 +209,7 @@ fi
 {{%- set line_regex = prefix_regex ~ parameter ~ separator_regex %}}
 mkdir -p {{{ sshd_config_dir }}}
 touch {{{ sshd_config_dir }}}/{{{ hardening_config_basename }}}
+chmod 0600 {{{ sshd_config_dir }}}/{{{ hardening_config_basename }}}
 {{{ lineinfile_absent(sshd_config_path, line_regex, insensitive=true) }}}
 {{{ lineinfile_absent_in_directory(sshd_config_dir, line_regex, insensitive=true, filename_glob="*.conf") }}}
 {{{ set_config_file(
@@ -684,11 +685,15 @@ Macro to enable or disable a particular service.
 #}}
 {{%- if init_system == "systemd" -%}}
   {{%- if service_state == "disable" -%}}
+if [[ $(/usr/bin/systemctl is-system-running) != "offline" ]]; then
 /usr/bin/systemctl stop "{{{ service }}}"
+fi
 /usr/bin/systemctl disable "{{{ service }}}"
   {{%- else -%}}
 /usr/bin/systemctl enable "{{{ service }}}"
+if [[ $(/usr/bin/systemctl is-system-running) != "offline" ]]; then
 /usr/bin/systemctl start "{{{ service }}}"
+fi
   {{%- endif %}}
 # The service may not be running because it has been started and failed,
 # so let's reset the state so OVAL checks pass.
@@ -726,6 +731,7 @@ if ! grep -q '#[[:space:]]*server' "{{{ config_file }}}" ; then
 else
   sed -i 's/#[ \t]*server/server/g' "{{{ config_file }}}"
 fi
+{{{ bash_ensure_nl_at_eof(config_file) }}}
 {{%- endmacro -%}}
 
 
@@ -913,8 +919,8 @@ if [ ! -f "$conf_path"/"$conf_name" ]; then
     if [ -f "$conf_path"/unix ]; then
         if grep -q "$(md5sum "$conf_path"/unix | cut -d ' ' -f 1)" /var/lib/dpkg/info/libpam-runtime.md5sums;then
             cp "$conf_path"/unix "$conf_path"/"$conf_name"
-            sed -i '/Default: yes/a Priority: 257\
-Conflicts: unix' "$conf_path"/"$conf_name"
+            sed -i 's/Priority: [0-9]\+/Priority: 257\
+Conflicts: unix/' "$conf_path"/"$conf_name"
             DEBIAN_FRONTEND=noninteractive pam-auth-update
         else
             echo "Not applicable - checksum of $conf_path/unix does not match the original." >&2
@@ -1019,6 +1025,7 @@ Default: yes
 Priority: 1024
 Password-Type: Primary
 Password: {{{ control }}} pam_pwhistory.so remember=24 enforce_for_root try_first_pass use_authtok
+Password-Initial: {{{ control }}} pam_pwhistory.so remember=24 enforce_for_root try_first_pass
 EOF
 fi
 
@@ -1402,7 +1409,7 @@ for f in /etc/sudoers /etc/sudoers.d/* ; do
   if ! test -z "$matching_list"; then
     while IFS= read -r entry; do
       # comment out "{{{ parameter }}}" matches to preserve user data
-      sed -i "s/^${entry}$/# &/g" $f
+      sed -i "s|^${entry}$|# &|g" $f
     done <<< "$matching_list"
 
     /usr/sbin/visudo -cf $f &> /dev/null || echo "Fail to validate $f with visudo"
@@ -1450,7 +1457,7 @@ done
 #}}
 {{%- macro bash_package_installed(pkgname) -%}}
 {{%- if pkg_manager == "apt_get" -%}}
-dpkg-query --show --showformat='${db:Status-Status}\n' "{{{ pkgname }}}" 2>/dev/null | grep -q ^installed
+dpkg-query --show --showformat='${db:Status-Status}' "{{{ pkgname }}}" 2>/dev/null | grep -q '^installed$'
 {{%- else -%}}
 rpm --quiet -q "{{{ pkgname }}}"
 {{%- endif -%}}
@@ -1858,7 +1865,7 @@ if [ "$skip" -ne 0 ]; then
         auid_string=$([[ {{{ auid_filters }}} ]] && echo " {{{ auid_filters }}}") || /bin/true
         full_rule="{{{ action_arch_filters }}}${syscall_string}${other_string}${auid_string} -F key={{{ key }}}" || /bin/true
         echo "$full_rule" >> "$default_file"
-        chmod o-rwx ${default_file}
+        chmod 0600 ${default_file}
     else
         # Check if the syscalls are declared as a comma separated list or
         # as multiple -S parameters
@@ -1937,7 +1944,7 @@ Part of the grub2_bootloader_argument template.
 {{%- macro update_etc_default_grub_manually_absent(arg_name) -%}}
 # Correct the form of default kernel command line in GRUB
 if grep -q '^GRUB_CMDLINE_LINUX=.*{{{ arg_name }}}=.*"'  '/etc/default/grub' ; then
-       sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\){{{ arg_name }}}=?[^[:space:]]*\(.*"\)/\1 \2/' '/etc/default/grub'
+       sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\){{{ arg_name }}}=\?[^[:space:]]*\(.*"\)/\1 \2/' '/etc/default/grub'
 fi
 {{%- endmacro %}}
 
@@ -2141,9 +2148,9 @@ This macro creates a Bash conditional which uses dpkg to check if a package pass
 #}}
 {{%- macro bash_pkg_conditional_dpkg(package, op=None, ver=None) -%}}
 {{%- if ver -%}}
-dpkg-query --show --showformat='${db:Status-Status}\n' '{{{ package }}}' 2>/dev/null | grep -q installed && {{{ bash_compare_version_dpkg(package, op, ver) }}}
+dpkg-query --show --showformat='${db:Status-Status}' '{{{ package }}}' 2>/dev/null | grep -q '^installed$' && {{{ bash_compare_version_dpkg(package, op, ver) }}}
 {{%- else -%}}
-dpkg-query --show --showformat='${db:Status-Status}\n' '{{{ package }}}' 2>/dev/null | grep -q installed
+dpkg-query --show --showformat='${db:Status-Status}' '{{{ package }}}' 2>/dev/null | grep -q '^installed$'
 {{%- endif -%}}
 {{%- endmacro -%}}
 
@@ -2236,18 +2243,18 @@ for f in $(echo -n "{{{ files }}}"); do
     # find key in section and change value
     if grep -qzosP "[[:space:]]*\[{{{ section }}}\]([^\n\[]*\n+)+?[[:space:]]*{{{ key }}}" "$f"; then
 {{% if no_quotes %}}
-            sed -i "s/{{{ key }}}[^(\n)]*/{{{ key }}}={{{ value }}}/" "$f"
+            sed -i "s/{{{ key }}}[^(\n)]*/{{{ key }}}={{{ value | replace("/", "\/") }}}/" "$f"
 {{% else %}}
-            sed -i 's/{{{ key }}}[^(\n)]*/{{{ key }}}="{{{ value }}}"/' "$f"
+            sed -i 's/{{{ key }}}[^(\n)]*/{{{ key }}}="{{{ value | replace("/", "\/") }}}"/' "$f"
 {{% endif %}}
             found=true
 
     # find section and add key = value to it
     elif grep -qs "[[:space:]]*\[{{{ section }}}\]" "$f"; then
 {{% if no_quotes %}}
-            sed -i "/[[:space:]]*\[{{{ section }}}\]/a {{{ key }}}={{{ value }}}" "$f"
+            sed -i "/[[:space:]]*\[{{{ section }}}\]/a {{{ key }}}={{{ value | replace("/", "\/") }}}" "$f"
 {{% else %}}
-            sed -i '/[[:space:]]*\[{{{ section }}}\]/a {{{ key }}}="{{{ value }}}"' "$f"
+            sed -i '/[[:space:]]*\[{{{ section }}}\]/a {{{ key }}}="{{{ value | replace ("/", "\/") }}}"' "$f"
 {{% endif %}}
             found=true
     fi
@@ -2421,6 +2428,11 @@ CURRENT_PROFILE=$(authselect current -r | awk '{ print $1 }')
 # If not already in use, a custom profile is created preserving the enabled features.
 if [[ ! $CURRENT_PROFILE == custom/* ]]; then
     ENABLED_FEATURES=$(authselect current | tail -n+3 | awk '{ print $2 }')
+    # The "local" profile does not contain essential security features required by multiple Benchmarks.
+    # If currently used, it is replaced by "sssd", which is the best option in this case.
+    if [[ $CURRENT_PROFILE == local ]]; then
+        CURRENT_PROFILE="sssd"
+    fi
     authselect create-profile hardening -b $CURRENT_PROFILE
     CURRENT_PROFILE="custom/hardening"
     {{{ bash_apply_authselect_changes('before-hardening-custom-profile') | indent(4) }}}
@@ -2658,7 +2670,7 @@ This macro defines a conditional expression that is evaluated as true
 if the remediation is performed during a build of a bootable container image.
 #}}
 {{%- macro bash_bootc_build() -%}}
-[[ "$OSCAP_BOOTC_BUILD" == "YES" ]]
+{ rpm --quiet -q kernel rpm-ostree bootc && ! rpm --quiet -q openshift-kubelet && { [ -f "/run/.containerenv" ] || [ -f "/.containerenv" ]; }; }
 {{%- endmacro -%}}
 
 {{#
@@ -2666,5 +2678,16 @@ This macro defines a conditional expression that is evaluated as true
 if the remediation is not performed during a build of a bootable container image.
 #}}
 {{%- macro bash_not_bootc_build() -%}}
-[[ "$OSCAP_BOOTC_BUILD" != "YES" ]]
+! {{{ bash_bootc_build() }}}
+{{%- endmacro -%}}
+
+
+{{#
+This macro creates a Bash conditional which checks the system architecture in /proc/sys/kernel/{osrelease,arch}
+
+  :param arch: system architecture (x86_64, aarch64, s90x, ppc64le, ...)
+  :type arch: str
+#}}
+{{%- macro bash_arch_conditional(arch) -%}}
+( grep -sqE "^.*\.{{{ arch }}}$" /proc/sys/kernel/osrelease || grep -sqE "^{{{ arch }}}$" /proc/sys/kernel/arch; )
 {{%- endmacro -%}}

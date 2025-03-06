@@ -29,7 +29,7 @@ SSG_REF_URIS = {
     'hipaa': 'https://www.gpo.gov/fdsys/pkg/CFR-2007-title45-vol1/pdf/CFR-2007-title45-vol1-chapA-subchapC.pdf',
     'ism': 'https://www.cyber.gov.au/acsc/view-all-content/ism',
     'iso27001-2013': 'https://www.iso.org/contents/data/standard/05/45/54534.html',
-    'nerc-cip': 'https://www.nerc.com/pa/Stand/Standard%20Purpose%20Statement%20DL/US_Standard_One-Stop-Shop.xlsx',
+    'nerc-cip': 'https://www.nerc.com/pa/Stand/AlignRep/One%20Stop%20Shop.xlsx',
     'stigid': 'https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cunix-linux',
     'os-srg': 'https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os',
     'app-srg': 'https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=application-servers',
@@ -40,6 +40,7 @@ SSG_REF_URIS = {
 product_directories = [
     'alinux2',
     'alinux3',
+    'almalinux9',
     'anolis8',
     'anolis23',
     'al2023',
@@ -60,6 +61,7 @@ product_directories = [
     'rhel8', 'rhel9', 'rhel10',
     'rhv4',
     'sle12', 'sle15', 'slmicro5',
+    'tencentos4',
     'ubuntu1604', 'ubuntu1804', 'ubuntu2004', 'ubuntu2204', 'ubuntu2404'
 ]
 
@@ -182,9 +184,16 @@ oval_header = (
         {0}#linux linux-definitions-schema.xsd">"""
     .format(oval_namespace))
 
+_timestamp = time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
+
 timestamp = time.strftime(
     "%Y-%m-%dT%H:%M:%S",
-    time.gmtime(int(os.environ.get('SOURCE_DATE_EPOCH', time.time())))
+    _timestamp
+)
+
+timestamp_yyyy_mm_dd = time.strftime(
+    "%Y-%m-%d",
+    _timestamp
 )
 
 PKG_MANAGER_TO_SYSTEM = {
@@ -203,6 +212,7 @@ PKG_MANAGER_TO_CONFIG_FILE = {
 FULL_NAME_TO_PRODUCT_MAPPING = {
     "Alibaba Cloud Linux 2": "alinux2",
     "Alibaba Cloud Linux 3": "alinux3",
+    "AlmaLinux OS 9": "almalinux9",
     "Anolis OS 8": "anolis8",
     "Anolis OS 23": "anolis23",
     "Amazon Linux 2023": "al2023",
@@ -230,6 +240,7 @@ FULL_NAME_TO_PRODUCT_MAPPING = {
     "SUSE Linux Enterprise 12": "sle12",
     "SUSE Linux Enterprise 15": "sle15",
     "SUSE Linux Enterprise Micro 5": "slmicro5",
+    "TencentOS Server 4": "tencentos4",
     "Ubuntu 16.04": "ubuntu1604",
     "Ubuntu 18.04": "ubuntu1804",
     "Ubuntu 20.04": "ubuntu2004",
@@ -287,12 +298,13 @@ REFERENCES = dict(
 
 MULTI_PLATFORM_LIST = ["rhel", "fedora", "rhv", "debian", "ubuntu",
                        "openeuler", "kylinserver",
-                       "opensuse", "sle", "ol", "ocp", "rhcos",
+                       "opensuse", "sle", "tencentos", "ol", "ocp", "rhcos",
                        "example", "eks", "alinux", "anolis", "openembedded", "al",
-                       "slmicro"]
+                       "slmicro", "almalinux"]
 
 MULTI_PLATFORM_MAPPING = {
     "multi_platform_alinux": ["alinux2", "alinux3"],
+    "multi_platform_almalinux": ["almalinux9"],
     "multi_platform_anolis": ["anolis8", "anolis23"],
     "multi_platform_debian": ["debian11", "debian12"],
     "multi_platform_example": ["example"],
@@ -308,6 +320,7 @@ MULTI_PLATFORM_MAPPING = {
     "multi_platform_rhv": ["rhv4"],
     "multi_platform_sle": ["sle12", "sle15"],
     "multi_platform_slmicro": ["slmicro5"],
+    "multi_platform_tencentos": ["tencentos4"],
     "multi_platform_ubuntu": ["ubuntu1604", "ubuntu1804", "ubuntu2004",
                               "ubuntu2204", "ubuntu2404"],
     "multi_platform_openembedded": ["openembedded"],
@@ -418,6 +431,7 @@ XCCDF_PLATFORM_TO_PACKAGE = {
 # _version_name_map = {
 MAKEFILE_ID_TO_PRODUCT_MAP = {
     'alinux': 'Alibaba Cloud Linux',
+    'almalinux': 'AlmaLinux OS',
     'anolis': 'Anolis OS',
     'chromium': 'Google Chromium Browser',
     'fedora': 'Fedora',
@@ -434,6 +448,7 @@ MAKEFILE_ID_TO_PRODUCT_MAP = {
     'opensuse': 'openSUSE',
     'sle': 'SUSE Linux Enterprise',
     'slmicro': 'SUSE Linux Enterprise Micro',
+    'tencentos': 'TencentOS Server',
     'example': 'Example',
     'ol': 'Oracle Linux',
     'ocp': 'Red Hat OpenShift Container Platform',
@@ -457,7 +472,11 @@ DEFAULT_CHRONY_CONF_PATH = '/etc/chrony.conf'
 DEFAULT_CHRONY_D_PATH = '/etc/chrony.d/'
 DEFAULT_AUDISP_CONF_PATH = '/etc/audit'
 DEFAULT_SYSCTL_REMEDIATE_DROP_IN_FILE = 'false'
-
+DEFAULT_BOOTABLE_CONTAINERS_SUPPORTED = 'false'
+DEFAULT_XWINDOWS_PACKAGES = [ 'xorg-x11-server-Xorg',
+                              'xorg-x11-server-common',
+                              'xorg-x11-server-utils',
+                              'xorg-x11-server-Xwayland']
 
 # Constants for OVAL object model
 STR_TO_BOOL = {

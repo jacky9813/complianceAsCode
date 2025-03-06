@@ -4,6 +4,7 @@
       <title>Kernel Runtime Parameter IPv6 Check</title>
       <affected family="unix">
 	<platform>multi_platform_alinux</platform>
+	<platform>multi_platform_almalinux</platform>
 	<platform>multi_platform_anolis</platform>
 	<platform>multi_platform_debian</platform>
 	<platform>multi_platform_example</platform>
@@ -18,6 +19,7 @@
 	<platform>multi_platform_rhv</platform>
 	<platform>multi_platform_sle</platform>
     <platform>multi_platform_slmicro5</platform>
+    <platform>multi_platform_tencentos</platform>
     <platform>multi_platform_ubuntu</platform>
       </affected>
       <description>Disables IPv6 for all network interfaces.</description>

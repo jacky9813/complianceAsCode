@@ -31,7 +31,7 @@ controls:
             - set_password_hashing_algorithm_passwordauth
             - set_password_hashing_algorithm_systemauth
             - sshd_disable_gssapi_auth
-            - var_password_hashing_algorithm_pam=sha512
+            - var_password_hashing_algorithm_pam=yescrypt
         status: automated
 
     -   id: '0421'
@@ -127,6 +127,7 @@ controls:
             - audit_rules_privileged_commands
             - audit_rules_session_events
             - audit_rules_unsuccessful_file_modification
+            - package_audit_installed
             - sshd_print_last_log
             - sebool_auditadm_exec_content
         status: automated
@@ -145,6 +146,7 @@ controls:
             - audit_rules_privileged_commands
             - audit_rules_session_events
             - audit_rules_unsuccessful_file_modification
+            - package_audit_installed
             - sshd_print_last_log
             - sebool_auditadm_exec_content
         status: automated
@@ -433,7 +435,7 @@ use of device access control software or by disabling external communication int
             - enable_dracut_fips_module
             - system_booted_in_fips_mode
             - var_system_crypto_policy=fips
-            - grub2_enable_fips_mode
+            - enable_fips_mode
         status: automated
 
     -   id: '1449'
@@ -727,3 +729,11 @@ use of device access control software or by disabling external communication int
             - sshd_set_max_auth_tries
             - sssd_enable_smartcards
         status: automated
+
+    -   id: '1745'
+        title: 'Early Launch Antimalware, Secure Boot, Trusted Boot and Measured Boot functionality is enabled.'
+        levels:
+            - base
+        rules:
+            - secure_boot_enabled
+        status: manual

@@ -51,5 +51,6 @@ srg_requirement: '{{{ srg_requirement_file_permission(file="/etc/ssh/sshd_config
 template:
     name: file_permissions
     vars:
-        filepath: /etc/ssh/sshd_config
+        filepath:
+            - /etc/ssh/sshd_config
         filemode: '0600'

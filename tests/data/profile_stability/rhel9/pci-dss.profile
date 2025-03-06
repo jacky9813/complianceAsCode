@@ -110,6 +110,7 @@ selections:
 - disable_users_coredumps
 - display_login_attempts
 - enable_authselect
+- enable_dconf_user_profile
 - ensure_gpgcheck_globally_activated
 - ensure_gpgcheck_never_disabled
 - ensure_pam_wheel_group_empty
@@ -198,6 +199,7 @@ selections:
 - package_audispd-plugins_installed
 - package_audit_installed
 - package_chrony_installed
+- package_cron_installed
 - package_cryptsetup-luks_installed
 - package_dhcp_removed
 - package_firewalld_installed

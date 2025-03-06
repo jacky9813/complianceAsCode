@@ -117,7 +117,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -165,6 +169,7 @@ controls:
             - ensure_gpgcheck_repo_metadata
             - ensure_redhat_gpgkey_installed
             - ensure_suse_gpgkey_installed
+            - ensure_almalinux_gpgkey_installed
         status: automated
 
     -   id: 164.308(a)(3)
@@ -277,7 +282,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -469,7 +478,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -1199,7 +1212,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -1335,7 +1352,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -1374,6 +1395,7 @@ controls:
             - ensure_gpgcheck_repo_metadata
             - ensure_redhat_gpgkey_installed
             - ensure_suse_gpgkey_installed
+            - ensure_almalinux_gpgkey_installed
         status: automated
 
     -   id: 164.312(c)
@@ -1404,6 +1426,7 @@ controls:
             - ensure_gpgcheck_repo_metadata
             - ensure_redhat_gpgkey_installed
             - ensure_suse_gpgkey_installed
+            - ensure_almalinux_gpgkey_installed
         status: automated
 
     -   id: 164.312(c)(2)
@@ -1423,6 +1446,7 @@ controls:
             - ensure_gpgcheck_repo_metadata
             - ensure_redhat_gpgkey_installed
             - ensure_suse_gpgkey_installed
+            - ensure_almalinux_gpgkey_installed
         status: automated
 
     -   id: 164.312(d)
@@ -1498,7 +1522,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -1592,7 +1620,11 @@ controls:
             - audit_rules_privileged_commands_unix_chkpwd
             - audit_rules_privileged_commands_userhelper
             - audit_rules_immutable
+            {{% if product == "rhel10" %}}
+            - audit_rules_mac_modification_etc_selinux
+            {{% else %}}
             - audit_rules_mac_modification
+            {{% endif %}}
             - audit_rules_mac_modification_usr_share
             - audit_rules_media_export
             - audit_rules_networkconfig_modification
@@ -1695,6 +1727,7 @@ controls:
             - ensure_gpgcheck_repo_metadata
             - ensure_redhat_gpgkey_installed
             - ensure_suse_gpgkey_installed
+            - ensure_almalinux_gpgkey_installed
         status: automated
 
     -   id: 164.312(e)(2)(ii)

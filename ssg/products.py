@@ -20,6 +20,8 @@ from .constants import (DEFAULT_PRODUCT, product_directories,
                         DEFAULT_AUDISP_CONF_PATH,
                         DEFAULT_FAILLOCK_PATH,
                         DEFAULT_SYSCTL_REMEDIATE_DROP_IN_FILE,
+                        DEFAULT_BOOTABLE_CONTAINERS_SUPPORTED,
+                        DEFAULT_XWINDOWS_PACKAGES,
                         PKG_MANAGER_TO_SYSTEM,
                         PKG_MANAGER_TO_CONFIG_FILE,
                         XCCDF_PLATFORM_TO_PACKAGE,
@@ -114,6 +116,12 @@ def _get_implied_properties(existing_properties):
 
     if "sysctl_remediate_drop_in_file" not in existing_properties:
         result["sysctl_remediate_drop_in_file"] = DEFAULT_SYSCTL_REMEDIATE_DROP_IN_FILE
+
+    if "bootable_containers_supported" not in existing_properties:
+        result["bootable_containers_supported"] = DEFAULT_BOOTABLE_CONTAINERS_SUPPORTED
+
+    if "xwindows_packages" not in existing_properties:
+        result["xwindows_packages"] = DEFAULT_XWINDOWS_PACKAGES
 
     return result
 

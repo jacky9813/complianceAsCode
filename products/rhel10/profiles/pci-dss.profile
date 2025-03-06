@@ -9,7 +9,7 @@ metadata:
 
 reference: https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0_1.pdf
 
-title: 'DRAFT - PCI-DSS v4.0.1 Control Baseline for Red Hat Enterprise Linux 10'
+title: 'PCI-DSS v4.0.1 Control Baseline for Red Hat Enterprise Linux 10'
 
 description: |-
     This is a draft profile for experimental purposes.
@@ -57,6 +57,7 @@ selections:
     - '!ensure_firewall_rules_for_open_ports'
     - '!ensure_shadow_group_empty'
     - '!ensure_suse_gpgkey_installed'
+    - '!ensure_almalinux_gpgkey_installed'
     - '!install_PAE_kernel_on_x86-32'
     - '!mask_nonessential_services'
     - '!nftables_ensure_default_deny_policy'
@@ -64,6 +65,8 @@ selections:
     - '!set_ip6tables_default_rule'
     - '!set_loopback_traffic'
     - '!set_password_hashing_algorithm_commonauth'
+    # Following rule are excluded since, "so far" no CCEs were defined for them and maybe irrelevant for rhel10
+    - '!enable_dconf_user_profile'
 
     # Following are incompatible with the rhel10 product (based on RHEL9)
     - '!service_chronyd_or_ntpd_enabled'
